@@ -3,6 +3,7 @@ package com.techacademy.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,10 +26,12 @@ import com.techacademy.service.UserDetail;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 従業員一覧画面
@@ -96,6 +99,43 @@ public class EmployeeController {
         }
 
         return "redirect:/employees";
+    }
+
+    // 従業員更新画面
+    @GetMapping(value = "/{code}/update")
+    public String edit(@PathVariable String code, Model model) {
+        model.addAttribute("employee", employeeService.findByCode(code));
+        return "employees/update";
+    }
+
+    // 従業員更新処理
+    @PostMapping(value = "/{code}/update")
+    public String post(@Validated String code, Employee employee, BindingResult res, Model model) {
+        employee.setCode(code);
+
+        // 入力チェック
+        if (res.hasErrors()) {
+            return edit(code, model);
+        }
+
+        // 論理削除を行った従業員番号を指定すると例外となるためtry~catchで対応
+        // (findByIdでは削除フラグがTRUEのデータが取得出来ないため)
+        try {
+            ErrorKinds result = employeeService.update(employee, passwordEncoder);
+
+            if (ErrorMessage.contains(result)) {
+                model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+                return edit(code, model);
+            }
+
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_EXCEPTION_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
+            return edit(code, model);
+        }
+
+        return "redirect:/employees";
+
     }
 
     // 従業員削除処理

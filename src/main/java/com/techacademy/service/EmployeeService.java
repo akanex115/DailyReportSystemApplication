@@ -52,6 +52,28 @@ public class EmployeeService {
         return ErrorKinds.SUCCESS;
     }
 
+
+    // 従業員更新
+    @Transactional
+    public ErrorKinds update(Employee employee, PasswordEncoder passwordEncoder) {
+        String originalPassword = employee.getPassword();
+
+        employee.setName(employee.getName());
+        employee.setRole(employee.getRole());
+        employee.setUpdatedAt(LocalDateTime.now());
+
+        // パスワードが空でない場合のみパスワードを更新
+        if(!originalPassword.isEmpty()) {
+            ErrorKinds result = employeePasswordCheck(employee);
+            if(ErrorKinds.CHECK_OK != result) {
+                return result;
+            }
+        }
+
+        employeeRepository.save(employee);
+        return ErrorKinds.SUCCESS;
+    }
+
     // 従業員削除
     @Transactional
     public ErrorKinds delete(String code, UserDetail userDetail) {
