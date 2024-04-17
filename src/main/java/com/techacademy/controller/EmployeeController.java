@@ -112,13 +112,14 @@ public class EmployeeController {
     // 従業員更新処理
     @PostMapping(value = "/{code}/update")
     // @Validated アノテーションを使用して入力値の検証を行う。結果はBindingResult res に格納される。
-    public String post(@Validated String code, Employee employee, BindingResult res, Model model) {
-        employee.setCode(code);
+    public String post(@PathVariable("code") String code, @Validated Employee employee, BindingResult res, Model model) {
 
         // 入力チェック
         if (res.hasErrors()) {
             return edit(code, model); // エラーがある場合、edit()を呼び出して再度更新画面を表示
         }
+
+        employee.setCode(code); // URLから取得したcodeをEmployeeオブジェクトに設定
 
         // 論理削除を行った従業員番号を指定すると例外となるためtry~catchで対応
         // (findByIdでは削除フラグがTRUEのデータが取得出来ないため)
