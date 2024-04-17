@@ -103,32 +103,37 @@ public class EmployeeController {
 
     // 従業員更新画面
     @GetMapping(value = "/{code}/update")
+    // @PathVariable String codeを使用して、URL{code}部分をメソッドの引数として受け取る
     public String edit(@PathVariable String code, Model model) {
-        model.addAttribute("employee", employeeService.findByCode(code));
+        model.addAttribute("employee", employeeService.findByCode(code)); // DBから従業員情報を取得し、modelオブジェクトにemployeeという名前で追加
         return "employees/update";
     }
 
     // 従業員更新処理
     @PostMapping(value = "/{code}/update")
+    // @Validated アノテーションを使用して入力値の検証を行う。結果はBindingResult res に格納される。
     public String post(@Validated String code, Employee employee, BindingResult res, Model model) {
         employee.setCode(code);
 
         // 入力チェック
         if (res.hasErrors()) {
-            return edit(code, model);
+            return edit(code, model); // エラーがある場合、edit()を呼び出して再度更新画面を表示
         }
 
         // 論理削除を行った従業員番号を指定すると例外となるためtry~catchで対応
         // (findByIdでは削除フラグがTRUEのデータが取得出来ないため)
         try {
+            // 通常の処理を試み（従業員情報の更新、パスワードの暗号化）、結果に応じて異なるErrorKinds値を返す
             ErrorKinds result = employeeService.update(employee, passwordEncoder);
 
+            // エラーが含まれているかチェック（含まれていたらエラーメッセージをmodelに追加し、再度更新画面を表示
             if (ErrorMessage.contains(result)) {
                 model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
                 return edit(code, model);
             }
 
         } catch (DataIntegrityViolationException e) {
+         // 更新中に予期しない問題が発生した場合は、特定のエラー処理を行う（エラーメッセージをmodelに設定し、更新画面を再表示）
             model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_EXCEPTION_ERROR),
                     ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
             return edit(code, model);

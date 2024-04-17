@@ -54,9 +54,9 @@ public class EmployeeService {
 
 
     // 従業員更新
-    @Transactional
+    @Transactional //いくつかの操作が全て成功した場合にのみデータベースに永続化する
     public ErrorKinds update(Employee employee, PasswordEncoder passwordEncoder) {
-        String originalPassword = employee.getPassword();
+        String originalPassword = employee.getPassword(); // 取得したパスワードを変数に保存
 
         employee.setName(employee.getName());
         employee.setRole(employee.getRole());
@@ -66,12 +66,12 @@ public class EmployeeService {
         if(!originalPassword.isEmpty()) {
             ErrorKinds result = employeePasswordCheck(employee);
             if(ErrorKinds.CHECK_OK != result) {
-                return result;
+                return result; // CHECK_OKでなければ、エラーコードを呼び出し元に返し、更新処理を中断
             }
         }
 
-        employeeRepository.save(employee);
-        return ErrorKinds.SUCCESS;
+        employeeRepository.save(employee); // 従業員情報をDBに保存
+        return ErrorKinds.SUCCESS; // 成功した場合に返す
     }
 
     // 従業員削除
