@@ -67,16 +67,14 @@ public class EmployeeService {
             if(ErrorKinds.CHECK_OK != result) {
                 return result; // CHECK_OKでなければ、エラーコードを呼び出し元に返し、更新処理を中断
             }
-            //existingEmployee.setPassword(passwordEncoder.encode(employee.getPassword())); // パスワードを暗号化して設定
-        }else {
-            employee.setPassword(existingEmployee.getPassword());
+            existingEmployee.setPassword(passwordEncoder.encode(employee.getPassword())); // パスワードを暗号化して設定
         }
 
         employee.setCode(employee.getCode());
         employee.setName(employee.getName());
         employee.setRole(employee.getRole());
         employee.setUpdatedAt(LocalDateTime.now());
-        employee.setCreatedAt(existingEmployee.getCreatedAt());
+        employee.setCreatedAt(LocalDateTime.now());
         employee.setDeleteFlg(false);
 
         employeeRepository.save(employee); // 従業員情報をDBに保存

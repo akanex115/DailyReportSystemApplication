@@ -119,7 +119,6 @@ public class EmployeeController {
         if (res.hasErrors()) {
             model.addAttribute("employee", employee);
             return "employees/update";
-            //return edit(code, model); // エラーがある場合、edit()を呼び出して再度更新画面を表示
         }
 
 
@@ -134,7 +133,6 @@ public class EmployeeController {
                 model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
                 model.addAttribute("employee", employee);  // エラー時、フォームに入力されたデータを保持
                 return "employees/update";
-                //return edit(code, model);
             }
 
         } catch (DataIntegrityViolationException e) {
@@ -143,7 +141,6 @@ public class EmployeeController {
                     ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
             model.addAttribute("employee", employee);  // エラー時、フォームに入力されたデータを保持
             return "employees/update";
-            //return edit(code, model);
         }
 
         return "redirect:/employees";
