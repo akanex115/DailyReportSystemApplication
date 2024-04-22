@@ -27,10 +27,10 @@
                                     </thead>
                                     <tbody>
                                         <tr th:each="report:${reportList}">
-                                            <td class="align-middle" th:text="${report.employee_code}"></td>
-                                            <td class="align-middle" th:text="${report.report_date}"></td>
+                                            <td class="align-middle" th:text="${report.employee.name}"></td>
+                                            <td class="align-middle" th:text="${report.reportDate}"></td>
                                             <td class="align-middle" th:text="${report.title}"></td>
-                                            <td class="align-middle"><a th:href="@{/reports/{id}/(code=${report.employee_code})}" class="btn btn-primary">詳細</a></td>
+                                            <td class="align-middle"><a th:href="@{/reports/{id}/(id=${report.id})}" class="btn btn-primary">詳細</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
