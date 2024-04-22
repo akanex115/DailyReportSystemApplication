@@ -8,6 +8,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.techacademy.entity.Employee;
@@ -43,6 +46,45 @@ public class ReportController {
             model.addAttribute("reportList", reports);
         }
         return "reports/list";
+
+    }
+
+    // レポート詳細画面
+    @GetMapping(value = "/{id}/")
+    public String detail(@PathVariable Integer id, Model model) {
+
+        model.addAttribute("report", reportService.findById(id));
+        return "reports/detail";
+    }
+
+    // レポート新規登録画面
+    @GetMapping(value = "/add")
+    public String create(@ModelAttribute Integer id) {
+
+        return "reports/new";
+    }
+
+    // レポート新規登録処理
+
+
+    // レポート更新画面
+    @GetMapping(value = "/{id}/update")
+    // @PathVariable String codeを使用して、URL{code}部分をメソッドの引数として受け取る
+    public String edit(@PathVariable Integer id, Model model) {
+        model.addAttribute("employee", reportService.findById(id)); // DBから従業員情報を取得し、modelオブジェクトにemployeeという名前で追加
+        return "reports/update";
+    }
+
+    // レポート更新処理
+
+
+    // レポート削除処理
+
+    // レポート削除処理
+    @PostMapping(value = "/{id}/delete")
+    public String delete(@PathVariable Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+
+        return "redirect:/reports";
 
     }
 

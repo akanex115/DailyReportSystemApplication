@@ -30,7 +30,7 @@ public class Report {
     // ID
     @Id // 主キー
     @GeneratedValue(strategy = GenerationType.IDENTITY) // IDENTITY戦略を指定して自動インクリメントを有効にする
-    private int id;
+    private Integer id;
 
     // 日付
     @NotNull
