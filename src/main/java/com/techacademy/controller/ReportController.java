@@ -1,18 +1,23 @@
 package com.techacademy.controller;
 
+import java.time.LocalDate;
 import java.util.List;
-
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.techacademy.constants.ErrorKinds;
+import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.Employee;
 import com.techacademy.entity.Employee.Role;
 import com.techacademy.entity.Report;
@@ -59,12 +64,32 @@ public class ReportController {
 
     // レポート新規登録画面
     @GetMapping(value = "/add")
-    public String create(@ModelAttribute Integer id) {
+    public String create(@ModelAttribute Report report) {
 
         return "reports/new";
     }
 
     // レポート新規登録処理
+    @PostMapping(value = "/add")
+    public String add(@Validated Report report, BindingResult res, Model model, @AuthenticationPrincipal UserDetail userDetail) {
+        if(res.hasErrors()) {
+            return create(report);
+        }
+
+        // 業務チェック
+        LocalDate inputDate = report.getReportDate();
+        Employee employee = userDetail.getEmployee();// ログイン中の従業員情報の取得
+
+        Optional<Report> existingReport = reportService.findByEmployeeAndDate(employee.getCode(), inputDate);
+        if (existingReport.isPresent()) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_EXCEPTION_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
+            return "reports/new"; // 新規登録画面に戻る
+        }
+
+        // 日報データの保存処理など
+        return "redirect:/reports";
+    }
 
 
     // レポート更新画面
