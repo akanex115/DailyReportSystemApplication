@@ -35,7 +35,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    // レポート一覧画面
+    // 日報一覧画面
     @GetMapping
     public String list(Model model, @AuthenticationPrincipal UserDetail userDetail ) {
         // userDetailから情報をとってくる
@@ -54,7 +54,7 @@ public class ReportController {
 
     }
 
-    // レポート詳細画面
+    // 日報詳細画面
     @GetMapping(value = "/{id}/")
     public String detail(@PathVariable Integer id, Model model) {
 
@@ -63,7 +63,7 @@ public class ReportController {
     }
 
 
-    // レポート新規登録画面
+    // 日報新規登録画面
     @GetMapping(value = "/add")
     public String create(@ModelAttribute Report report, Model model, @AuthenticationPrincipal UserDetail userDetail) {
         Employee employee = userDetail.getEmployee();
@@ -73,7 +73,7 @@ public class ReportController {
         return "reports/new";
     }
 
-    // レポート新規登録処理
+    // 日報新規登録処理
     @PostMapping(value = "/add")
     public String add(@Validated Report report, BindingResult res, Model model, @AuthenticationPrincipal UserDetail userDetail) {
         if(res.hasErrors()) {
@@ -102,6 +102,24 @@ public class ReportController {
         }
 
         return "redirect:/reports"; // 保存成功時は日報一覧画面にリダイレクト
+    }
+
+    // 日報削除処理
+    @PostMapping(value = "/{id}/delete")
+    public String delete(@PathVariable Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+
+        reportService.delete(id);
+
+
+        return "redirect:/reports";
+    }
+
+    // 日報更新画面
+    @GetMapping(value = "/{id}/update")
+    // @PathVariableを使用して、URL{id}部分をメソッドの引数として受け取る
+    public String edit(@PathVariable Integer id, Model model) {
+        model.addAttribute("report", reportService.findById(id)); // DBから日報情報を取得し、modelオブジェクトにreportという名前で追加
+        return "reports/update";
     }
 
 

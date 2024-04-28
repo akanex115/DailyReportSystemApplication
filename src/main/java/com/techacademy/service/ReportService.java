@@ -73,6 +73,7 @@ public class ReportService {
         LocalDateTime now = LocalDateTime.now();
         report.setUpdatedAt(now);
         report.setDeleteFlg(true);
+
     }
 
 

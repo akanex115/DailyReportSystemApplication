@@ -22,10 +22,12 @@
                             <form th:action="@{/reports/{id}/update(id=${report.id})}" th:object="${report}" th:method="post">
                                 <div class="wizard wizard-success mb-4">
                                     <div class="mb-3">
-                                        <label class="form-label" for="code">日付</label>
+                                        <label class="form-label" for="reportDate">日付</label>
                                         <p class="mb-1"></p>
                                         <div class="col-md-7">
+                                            <input class="form-control" type="date" th:field="*{reportDate}" id="reportDate">
                                             <span id="code" th:text="${code}"></span>
+                                            <div th:if="${errorMessage}" class="text-danger" th:text="${errorMessage}"></div>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -36,18 +38,18 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label" for="password">タイトル</label>
+                                        <label class="form-label" for="title">タイトル</label>
                                         <p class="mb-1"></p>
-                                        <div class="col-md-7">
+                                        <div class="col-md-9">
                                             <input class="form-control" type="text" th:field="*{title}" th:errorclass="err" id="title">
                                             <span th:text="${passwordError}" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label" for="password">内容</label>
+                                        <label class="form-label" for="content">内容</label>
                                         <p class="mb-1"></p>
-                                        <div class="col-md-7">
-                                            <input class="form-control" type="text" th:field="*{content}" th:errorclass="err" id="content">
+                                        <div class="col-md-12">
+                                            <textarea class="form-control" type="text" th:field="*{content}" th:errorclass="err" id="content" rows="8"></textarea>
                                             <span th:text="${passwordError}" class="text-danger"></span>
                                         </div>
                                     </div>
