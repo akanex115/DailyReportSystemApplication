@@ -135,13 +135,14 @@ public class ReportController {
             return "reports/update";
         }
 
+        Optional<Report> existingReport = reportService.findByEmployeeAndDate(report.getEmployee().getCode(), report.getReportDate());
+        if (existingReport.isPresent() && !existingReport.get().getId().equals(report.getId())) {
+            model.addAttribute("errorMessage", "既に登録されている日付です");
+            return "reports/update"; // 重複エラーがあれば更新画面に戻る
+        }
+
+
         reportService.update(report);
-
-
-        // 更新日付に日報が存在する場合エラー
-
-        // 更新日付と既存日付が一致していれば更新処理（日付変えていない）
-
 
         return "redirect:/reports";
 
