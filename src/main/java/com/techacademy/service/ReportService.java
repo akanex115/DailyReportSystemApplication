@@ -65,25 +65,38 @@ public class ReportService {
     // 日報更新
     @Transactional
     public ErrorKinds update(Report report) {
+
         Report existingReport = reportRepository.findById(report.getId()).orElse(null);
-        if(existingReport == null) {
-            return ErrorKinds.BLANK_ERROR;
+        if (existingReport == null) {
+            return ErrorKinds.BLANK_ERROR;  // 既存の日報が見つからない場合はエラーを返す
         }
 
-        report.setId(report.getId());
-        report.setReportDate(report.getReportDate());
-        report.setEmployee(report.getEmployee());
-        report.setTitle(report.getTitle());
-        report.setContent(report.getContent());
-        report.setUpdatedAt(LocalDateTime.now());
-        report.setCreatedAt(existingReport.getCreatedAt());
-        report.setDeleteFlg(false);
+        // 日付の重複チェックを行う場合
+        if (report.getReportDate() != null && reportRepository.existsByReportDateAndEmployee(report.getReportDate(), report.getEmployee())) {
+            return ErrorKinds.DUPLICATE_ERROR; // 日付が重複している場合はエラーを返す
+        }
 
-        reportRepository.save(report); // 従業員情報をDBに保存
-        return ErrorKinds.SUCCESS; // 成功した場合に返す
+        // 必要なフィールドのみ更新
+        if (report.getReportDate() != null) {
+            existingReport.setReportDate(report.getReportDate());
+        }
+        if (report.getEmployee() != null) {
+            existingReport.setEmployee(report.getEmployee());
+        }
+        if (report.getTitle() != null) {
+            existingReport.setTitle(report.getTitle());
+        }
+        if (report.getContent() != null) {
+            existingReport.setContent(report.getContent());
+        }
+        existingReport.setUpdatedAt(LocalDateTime.now());  // 更新日時を現在の日時に設定
+
+
+        reportRepository.save(existingReport);  // 更新した日報情報をDBに保存
+
+
+        return ErrorKinds.SUCCESS;  // 成功した場合に返す
     }
-
-    // 画面で表示中の従業員かつ入力した日付の日報データが存在する場合エラー
 
 
 
