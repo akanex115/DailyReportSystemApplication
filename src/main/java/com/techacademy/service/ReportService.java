@@ -63,6 +63,29 @@ public class ReportService {
 
 
     // 日報更新
+    @Transactional
+    public ErrorKinds update(Report report) {
+        Report existingReport = reportRepository.findById(report.getId()).orElse(null);
+        if(existingReport == null) {
+            return ErrorKinds.BLANK_ERROR;
+        }
+
+        report.setId(report.getId());
+        report.setReportDate(report.getReportDate());
+        report.setEmployee(report.getEmployee());
+        report.setTitle(report.getTitle());
+        report.setContent(report.getContent());
+        report.setUpdatedAt(LocalDateTime.now());
+        report.setCreatedAt(existingReport.getCreatedAt());
+        report.setDeleteFlg(false);
+
+        reportRepository.save(report); // 従業員情報をDBに保存
+        return ErrorKinds.SUCCESS; // 成功した場合に返す
+    }
+
+    // 画面で表示中の従業員かつ入力した日付の日報データが存在する場合エラー
+
+
 
     // 日報削除
     @Transactional
