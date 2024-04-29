@@ -35,6 +35,7 @@
                                         <p class="mb-1"></p>
                                         <div class="col-md-7">
                                             <td class="align-middle" th:text="${report.employee.name}"></td>
+                                            <input type="hidden" th:field="*{report.employee.name}" id="employee.name">
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -42,7 +43,7 @@
                                         <p class="mb-1"></p>
                                         <div class="col-md-9">
                                             <input class="form-control" type="text" th:field="*{title}" th:errorclass="err" id="title">
-                                            <span th:text="${passwordError}" class="text-danger"></span>
+                                            <span th:errors="*{title}" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -50,7 +51,7 @@
                                         <p class="mb-1"></p>
                                         <div class="col-md-12">
                                             <textarea class="form-control" type="text" th:field="*{content}" th:errorclass="err" id="content" rows="8"></textarea>
-                                            <span th:text="${passwordError}" class="text-danger"></span>
+                                            <span th:errors="*{content}" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>

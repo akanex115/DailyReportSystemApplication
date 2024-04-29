@@ -133,11 +133,13 @@ public class ReportController {
             return "reports/update";
         }
 
+        // 業務チェック
         Optional<Report> existingReport = reportService.findByEmployeeAndDate(userDetail.getEmployee().getCode(), report.getReportDate());
         if (existingReport.isPresent() && !existingReport.get().getId().equals(report.getId())) {
             model.addAttribute("errorMessage", "既に登録されている日付です");
-            return "reports/update"; // 重複エラーがあれば更新画面に戻る
+            return edit(id, model); // 重複エラーがあれば更新画面に戻る
         }
+
 
 
         reportService.update(report);
