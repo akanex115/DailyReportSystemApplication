@@ -72,7 +72,7 @@ public class ReportService {
         }
 
         // 日付の重複チェックを行う場合
-        if (report.getReportDate() != null && reportRepository.existsByReportDateAndEmployee(report.getReportDate(), report.getEmployee())) {
+        if (reportRepository.existsByReportDateAndEmployee(report.getReportDate(), report.getEmployee())) {
             return ErrorKinds.DUPLICATE_ERROR; // 日付が重複している場合はエラーを返す
         }
 

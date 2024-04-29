@@ -1,7 +1,6 @@
 package com.techacademy.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -126,8 +125,7 @@ public class ReportController {
     // 日報更新処理
     @PostMapping(value = "/{id}/update")
     // @Validated アノテーションを使用して入力値の検証を行う。結果はBindingResult res に格納される。
-    public String post(@PathVariable("id") Integer id, @Validated Report report, BindingResult res, Model model) {
-        report.setId(id); // URLから取得したidをReportオブジェクトに設定)
+    public String post(@PathVariable("id") Integer id, @Validated Report report, BindingResult res, Model model, @AuthenticationPrincipal UserDetail userDetail) {
 
         // 入力チェック
         if (res.hasErrors()) {
@@ -135,7 +133,7 @@ public class ReportController {
             return "reports/update";
         }
 
-        Optional<Report> existingReport = reportService.findByEmployeeAndDate(report.getEmployee().getCode(), report.getReportDate());
+        Optional<Report> existingReport = reportService.findByEmployeeAndDate(userDetail.getEmployee().getCode(), report.getReportDate());
         if (existingReport.isPresent() && !existingReport.get().getId().equals(report.getId())) {
             model.addAttribute("errorMessage", "既に登録されている日付です");
             return "reports/update"; // 重複エラーがあれば更新画面に戻る
