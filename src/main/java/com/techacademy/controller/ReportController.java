@@ -126,6 +126,10 @@ public class ReportController {
     @PostMapping(value = "/{id}/update")
     // @Validated アノテーションを使用して入力値の検証を行う。結果はBindingResult res に格納される。
     public String post(@PathVariable("id") Integer id, @Validated Report report, BindingResult res, Model model, @AuthenticationPrincipal UserDetail userDetail) {
+        report.setId(id); // URLから取得したidをReportオブジェクトに設定
+
+        // 従業員情報をReportにセット
+        report.setEmployee(userDetail.getEmployee());
 
         // 入力チェック
         if (res.hasErrors()) {
@@ -140,10 +144,7 @@ public class ReportController {
             return edit(id, model); // 重複エラーがあれば更新画面に戻る
         }
 
-
-
         reportService.update(report);
-
         return "redirect:/reports";
 
     }
