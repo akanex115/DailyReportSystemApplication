@@ -65,6 +65,7 @@ public class ReportService {
     // 日報更新
     @Transactional
     public ErrorKinds update(Report report) {
+        Report existingReport = reportRepository.findById(report.getId()).orElse(null);
 
         // 日付の重複チェックを行う場合
         if (reportRepository.existsByReportDateAndEmployee(report.getReportDate(), report.getEmployee())) {
@@ -72,13 +73,13 @@ public class ReportService {
         }
 
         // フィールド更新
-        report.setReportDate(report.getReportDate());
-        report.setEmployee(report.getEmployee());
-        report.setTitle(report.getTitle());
-        report.setContent(report.getContent());
-        report.setUpdatedAt(LocalDateTime.now());  // 更新日時を現在の日時に設定
+        existingReport.setReportDate(report.getReportDate());
+        existingReport.setEmployee(report.getEmployee());
+        existingReport.setTitle(report.getTitle());
+        existingReport.setContent(report.getContent());
+        existingReport.setUpdatedAt(LocalDateTime.now());  // 更新日時を現在の日時に設定
 
-        reportRepository.save(report);  // 更新した日報情報をDBに保存
+        reportRepository.save(existingReport);  // 更新した日報情報をDBに保存
 
         return ErrorKinds.SUCCESS;  // 成功した場合に返す
     }
