@@ -68,9 +68,7 @@ public class ReportService {
         Report existingReport = reportRepository.findById(report.getId()).orElse(null);
 
         // 日付の重複チェックを行う場合
-        if (reportRepository.existsByReportDateAndEmployee(report.getReportDate(), report.getEmployee())) {
-            return ErrorKinds.DUPLICATE_ERROR; // 日付が重複している場合はエラーを返す
-        }
+
 
         // フィールド更新
         existingReport.setReportDate(report.getReportDate());
